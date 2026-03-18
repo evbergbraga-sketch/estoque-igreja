@@ -172,7 +172,7 @@ tr:hover td{background:#f8fbf2}
 //  Cole a URL do Apps Script na primeira tela de configuração
 // ================================================================
 
-let API_URL = localStorage.getItem("estoque_api_url") || "";
+let API_URL = "https://script.google.com/macros/s/AKfycbxVH9YSqGZ3S5eYNBxbCz0Xz7vUeN6Xq5dFrEEeoo4hJXWSISCYs5dTkbj8um9n3UStjg/exec";
 
 let S = {
   logado:null, aba:"dashboard",
@@ -183,7 +183,7 @@ let S = {
   iS:null, iR:null,
   fCat:"", fNome:"",
   load:false,
-  configurando:!API_URL,
+  configurando:false,
   menuOpen:false,
 };
 
