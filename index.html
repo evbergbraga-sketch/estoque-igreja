@@ -10,7 +10,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-html,body{width:100%;min-height:100vh;overflow-x:hidden}
+html,body{width:100%;min-height:100vh;overflow-x:hidden;max-width:100vw}
 body{font-family:'Nunito',sans-serif;background:#f0f4f0;color:#1a2332;font-size:14px}
 :root{
   --blue:#6B8E23;--bl:#f0f4e8;
@@ -23,7 +23,7 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f0;color:#1a2332;font-size:
 }
 
 /* ── LAYOUT DESKTOP (sidebar) ── */
-.app-wrap{display:flex;min-height:100vh}
+.app-wrap{display:flex;min-height:100vh;max-width:100vw;overflow-x:hidden}
 .sidebar{width:var(--sidebar);background:#fff;border-right:1px solid var(--brd);display:flex;flex-direction:column;position:fixed;top:0;left:0;height:100vh;z-index:200;transition:transform .3s}
 .sidebar-logo{padding:20px 16px 12px;border-bottom:1px solid var(--brd);text-align:center}
 .sidebar-logo .icon{font-size:36px;margin-bottom:4px}
@@ -41,14 +41,14 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f0;color:#1a2332;font-size:
 .sidebar-footer{padding:12px 16px;border-top:1px solid var(--brd)}
 .logout-btn{width:100%;font-family:'Nunito',sans-serif;font-size:12px;font-weight:700;background:none;border:1.5px solid var(--brd);border-radius:8px;padding:8px;cursor:pointer;color:var(--gray)}
 .logout-btn:hover{background:var(--rl);color:var(--red);border-color:var(--red)}
-.main{margin-left:var(--sidebar);flex:1;display:flex;flex-direction:column;min-height:100vh}
+.main{margin-left:var(--sidebar);flex:1;display:flex;flex-direction:column;min-height:100vh;min-width:0;overflow-x:hidden}
 .topbar{background:var(--blue);color:#fff;padding:12px 20px;display:flex;align-items:center;gap:12px}
 .topbar-title{font-size:15px;font-weight:700;flex:1}
 .hamburger{display:none;background:none;border:none;color:#fff;font-size:22px;cursor:pointer;padding:2px 6px}
-.content{flex:1;padding:20px;max-width:900px;width:100%}
+.content{flex:1;padding:20px;max-width:900px;width:100%;overflow-x:hidden}
 
 /* ── MOBILE (topbar + bottom nav) ── */
-.mobile-topbar{display:none;background:var(--blue);color:#fff;padding:12px 16px;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
+.mobile-topbar{display:none;background:var(--blue);color:#fff;padding:12px 16px;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;width:100%;max-width:100vw;overflow:hidden}
 .mobile-topbar-title{font-size:15px;font-weight:700}
 .mobile-nav{display:none;position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid var(--brd);z-index:100;overflow-x:auto;scrollbar-width:none}
 .mobile-nav::-webkit-scrollbar{display:none}
@@ -59,7 +59,7 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f0;color:#1a2332;font-size:
 .mobile-content{padding-bottom:65px}
 
 /* ── CARDS ── */
-.card{background:#fff;border-radius:var(--rad);border:1px solid var(--brd);padding:16px;margin-bottom:14px;box-shadow:0 1px 4px rgba(0,0,0,.07)}
+.card{background:#fff;border-radius:var(--rad);border:1px solid var(--brd);padding:16px;margin-bottom:14px;box-shadow:0 1px 4px rgba(0,0,0,.07);overflow:hidden;word-break:break-word}
 .card-title{font-size:15px;font-weight:700;margin-bottom:14px;color:#1a2332}
 .metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px}
 .metric{background:var(--grl);border-radius:var(--rad);padding:12px;border:1px solid var(--brd);text-align:center}
@@ -69,7 +69,7 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f0;color:#1a2332;font-size:
 .metric-val.green{color:var(--green)}
 
 /* ── ALERTS ── */
-.alert{border-radius:var(--rad);padding:10px 14px;font-size:12px;font-weight:600;margin-bottom:10px}
+.alert{border-radius:var(--rad);padding:10px 14px;font-size:12px;font-weight:600;margin-bottom:10px;word-break:break-word;overflow-wrap:break-word}
 .alert-red{background:var(--rl);color:var(--red);border:1px solid #f5c0bb}
 .alert-green{background:var(--gl);color:var(--green);border:1px solid #a8dab8}
 .alert-amber{background:var(--al);color:var(--amb);border:1px solid #f5d98a}
@@ -92,7 +92,7 @@ input:focus,select:focus,textarea:focus{border-color:var(--blue)}
 .btn-block{width:100%}
 
 /* ── TABLE ── */
-.table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+.table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;width:100%;display:block}
 table{width:100%;border-collapse:collapse;font-size:13px}
 th{text-align:left;font-size:10px;font-weight:700;color:var(--gray);text-transform:uppercase;letter-spacing:.4px;padding:7px 10px;border-bottom:2px solid var(--brd)}
 td{padding:9px 10px;border-bottom:1px solid var(--brd);vertical-align:middle}
@@ -139,21 +139,21 @@ tr:hover td{background:#f8fbf2}
 /* ── RESPONSIVO TABLET ── */
 @media(max-width:900px){
   :root{--sidebar:180px}
-  .metrics{grid-template-columns:repeat(2,1fr)}
+  .metrics{grid-template-columns:repeat(2,1fr);gap:8px}
 }
 
 /* ── RESPONSIVO MOBILE ── */
 @media(max-width:640px){
   .sidebar{transform:translateX(-100%)}
   .sidebar.open{transform:translateX(0);box-shadow:4px 0 20px rgba(0,0,0,.2)}
-  .main{margin-left:0}
+  .main{margin-left:0;width:100%;max-width:100vw}
   .topbar{display:none}
   .mobile-topbar{display:flex}
   .mobile-nav{display:block}
   .hamburger{display:block}
-  .content{padding:12px}
+  .content{padding:10px;box-sizing:border-box;width:100%}
   .mobile-content{padding-bottom:68px}
-  .metrics{grid-template-columns:repeat(2,1fr)}
+  .metrics{grid-template-columns:repeat(2,1fr);gap:8px}
   .row2,.row3{grid-template-columns:1fr}
   .li{grid-template-columns:1fr 70px 32px}
   input,select{font-size:16px}
@@ -325,7 +325,20 @@ async function fazerLogin(){
   document.getElementById("lerro").textContent="";
   if(!S.uSel){document.getElementById("lerro").textContent="Selecione um usuário.";return;}
   const r=await api({acao:"login",perfil:S.uSel.perfil,senha:pw,nome:S.uSel.nome});
-  if(r.ok){S.logado=r.usuario;S.aba="dashboard";await carregar();}
+  if(r.ok){
+    // Busca permissoes atualizadas do usuario no servidor
+    const ru=await api({acao:"getUsuarios"});
+    if(ru.ok){
+      S.usuarios=ru.usuarios;
+      const uAtual=ru.usuarios.find(u=>u.nome===r.usuario.nome);
+      if(uAtual){
+        r.usuario.permissoes=uAtual.permissoes;
+      }
+    }
+    S.logado=r.usuario;
+    S.aba="dashboard";
+    await carregar();
+  }
   else document.getElementById("lerro").textContent=r.erro;
 }
 
@@ -736,16 +749,24 @@ async function salvaPerm(){
   document.getElementById("pfmsg").innerHTML='<div class="loading"><div class="spinner"></div>Salvando...</div>';
   const r=await api({acao:"salvarPermissoes",nome:S.cfgUser.nome,permissoes:S.cfgUser.permissoes||[]});
   if(r.ok){
-    // Recarrega lista de usuarios para refletir novas permissoes
+    // Recarrega TODOS os usuarios do servidor
     const ru=await api({acao:"getUsuarios"});
     if(ru.ok){
       S.usuarios=ru.usuarios;
-      // Atualiza cfgUser com dados novos
+      // Atualiza cfgUser
       const atualizado=ru.usuarios.find(u=>u.nome===S.cfgUser.nome);
-      if(atualizado)S.cfgUser={...atualizado};
+      if(atualizado) S.cfgUser={...atualizado};
+      // CRITICO: se o usuario logado teve permissoes alteradas, atualiza S.logado tambem
+      if(S.logado){
+        const logadoAtualizado=ru.usuarios.find(u=>u.nome===S.logado.nome);
+        if(logadoAtualizado){
+          S.logado.permissoes=logadoAtualizado.permissoes;
+          S.logado.perfil=logadoAtualizado.perfil;
+        }
+      }
     }
-    document.getElementById("pfmsg").innerHTML='<div class="alert alert-green" style="margin-top:10px">✅ Permissões salvas e aplicadas!</div>';
-    setTimeout(()=>render(),1000);
+    document.getElementById("pfmsg").innerHTML='<div class="alert alert-green" style="margin-top:10px">✅ Permissões salvas! O usuário verá as mudanças no próximo login.</div>';
+    render();
   } else {
     document.getElementById("pfmsg").innerHTML='<div class="alert alert-red" style="margin-top:10px">'+r.erro+'</div>';
   }
