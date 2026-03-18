@@ -1,0 +1,747 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Estoque NC Barra">
+<title>Estoque Igreja NC Barra</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{width:100%;min-height:100vh;overflow-x:hidden}
+body{font-family:'Nunito',sans-serif;background:#f0f4f0;color:#1a2332;font-size:14px}
+:root{
+  --blue:#6B8E23;--bl:#f0f4e8;
+  --green:#4a6b1a;--gl:#e6f0d8;
+  --red:#c0392b;--rl:#fdf0ef;
+  --amb:#c47f17;--al:#fef7e6;
+  --gray:#64748b;--grl:#f8fafc;
+  --brd:#d4e0b8;--rad:12px;
+  --sidebar:220px;
+}
+
+/* ── LAYOUT DESKTOP (sidebar) ── */
+.app-wrap{display:flex;min-height:100vh}
+.sidebar{width:var(--sidebar);background:#fff;border-right:1px solid var(--brd);display:flex;flex-direction:column;position:fixed;top:0;left:0;height:100vh;z-index:200;transition:transform .3s}
+.sidebar-logo{padding:20px 16px 12px;border-bottom:1px solid var(--brd);text-align:center}
+.sidebar-logo .icon{font-size:36px;margin-bottom:4px}
+.sidebar-logo .name{font-size:15px;font-weight:700;color:#1a2332}
+.sidebar-logo .sub{font-size:11px;color:var(--gray)}
+.sidebar-user{padding:12px 16px;border-bottom:1px solid var(--brd);background:var(--bl)}
+.sidebar-user .uname{font-size:13px;font-weight:700;color:var(--blue)}
+.sidebar-user .uperfil{font-size:11px;color:var(--gray)}
+.sidebar-nav{flex:1;overflow-y:auto;padding:8px 0}
+.snav-btn{display:flex;align-items:center;gap:10px;width:100%;padding:10px 16px;font-family:'Nunito',sans-serif;font-size:13px;font-weight:600;color:var(--gray);background:none;border:none;cursor:pointer;text-align:left;border-left:3px solid transparent;transition:all .15s}
+.snav-btn:hover{background:var(--bl);color:var(--blue)}
+.snav-btn.active{background:var(--bl);color:var(--blue);border-left-color:var(--blue)}
+.snav-btn .ico{font-size:16px;width:20px;text-align:center}
+.snav-badge{margin-left:auto;background:var(--red);color:#fff;font-size:10px;font-weight:700;padding:1px 6px;border-radius:20px}
+.sidebar-footer{padding:12px 16px;border-top:1px solid var(--brd)}
+.logout-btn{width:100%;font-family:'Nunito',sans-serif;font-size:12px;font-weight:700;background:none;border:1.5px solid var(--brd);border-radius:8px;padding:8px;cursor:pointer;color:var(--gray)}
+.logout-btn:hover{background:var(--rl);color:var(--red);border-color:var(--red)}
+.main{margin-left:var(--sidebar);flex:1;display:flex;flex-direction:column;min-height:100vh}
+.topbar{background:var(--blue);color:#fff;padding:12px 20px;display:flex;align-items:center;gap:12px}
+.topbar-title{font-size:15px;font-weight:700;flex:1}
+.hamburger{display:none;background:none;border:none;color:#fff;font-size:22px;cursor:pointer;padding:2px 6px}
+.content{flex:1;padding:20px;max-width:900px;width:100%}
+
+/* ── MOBILE (topbar + bottom nav) ── */
+.mobile-topbar{display:none;background:var(--blue);color:#fff;padding:12px 16px;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
+.mobile-topbar-title{font-size:15px;font-weight:700}
+.mobile-nav{display:none;position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid var(--brd);z-index:100;overflow-x:auto;scrollbar-width:none}
+.mobile-nav::-webkit-scrollbar{display:none}
+.mobile-nav-inner{display:flex;min-width:max-content}
+.mnav-btn{font-family:'Nunito',sans-serif;font-size:11px;font-weight:600;color:var(--gray);background:none;border:none;border-top:2px solid transparent;padding:8px 14px;cursor:pointer;white-space:nowrap;display:flex;flex-direction:column;align-items:center;gap:2px}
+.mnav-btn.active{color:var(--blue);border-top-color:var(--blue)}
+.mnav-ico{font-size:16px}
+.mobile-content{padding-bottom:65px}
+
+/* ── CARDS ── */
+.card{background:#fff;border-radius:var(--rad);border:1px solid var(--brd);padding:16px;margin-bottom:14px;box-shadow:0 1px 4px rgba(0,0,0,.07)}
+.card-title{font-size:15px;font-weight:700;margin-bottom:14px;color:#1a2332}
+.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px}
+.metric{background:var(--grl);border-radius:var(--rad);padding:12px;border:1px solid var(--brd);text-align:center}
+.metric-label{font-size:11px;color:var(--gray);margin-bottom:4px;font-weight:600}
+.metric-val{font-size:26px;font-weight:700;color:#1a2332}
+.metric-val.red{color:var(--red)}
+.metric-val.green{color:var(--green)}
+
+/* ── ALERTS ── */
+.alert{border-radius:var(--rad);padding:10px 14px;font-size:12px;font-weight:600;margin-bottom:10px}
+.alert-red{background:var(--rl);color:var(--red);border:1px solid #f5c0bb}
+.alert-green{background:var(--gl);color:var(--green);border:1px solid #a8dab8}
+.alert-amber{background:var(--al);color:var(--amb);border:1px solid #f5d98a}
+
+/* ── FORMS ── */
+.form-label{font-size:11px;font-weight:700;color:var(--gray);display:block;margin-bottom:4px;margin-top:12px;text-transform:uppercase;letter-spacing:.4px}
+input,select,textarea{width:100%;font-family:'Nunito',sans-serif;font-size:14px;font-weight:500;background:#fff;border:1.5px solid var(--brd);border-radius:8px;padding:10px 12px;color:#1a2332;outline:none;transition:border .2s}
+input:focus,select:focus,textarea:focus{border-color:var(--blue)}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+
+/* ── BUTTONS ── */
+.btn{font-family:'Nunito',sans-serif;font-weight:700;border:none;border-radius:8px;padding:11px 20px;font-size:14px;cursor:pointer;display:inline-block;margin-top:14px;transition:opacity .2s}
+.btn:active{opacity:.8}
+.btn-blue{background:var(--blue);color:#fff}
+.btn-green{background:var(--green);color:#fff}
+.btn-amber{background:var(--amb);color:#fff}
+.btn-outline{background:#fff;color:#1a2332;border:1.5px solid var(--brd)}
+.btn-red{background:var(--red);color:#fff}
+.btn-block{width:100%}
+
+/* ── TABLE ── */
+.table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{text-align:left;font-size:10px;font-weight:700;color:var(--gray);text-transform:uppercase;letter-spacing:.4px;padding:7px 10px;border-bottom:2px solid var(--brd)}
+td{padding:9px 10px;border-bottom:1px solid var(--brd);vertical-align:middle}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:#f8fbf2}
+
+/* ── TAGS ── */
+.tag{font-size:10px;font-weight:700;padding:3px 9px;border-radius:20px;display:inline-block}
+.tag-entrada{background:var(--gl);color:var(--green)}
+.tag-saida{background:var(--rl);color:var(--red)}
+.tag-ajuste{background:var(--bl);color:var(--blue)}
+.tag-pendente{background:var(--al);color:var(--amb)}
+.tag-ok{background:var(--gl);color:var(--green)}
+.tag-baixo{background:var(--rl);color:var(--red)}
+.tag-zero{background:#f1f5f9;color:var(--gray)}
+
+/* ── LOGIN ── */
+.login-page{min-height:100vh;display:flex;align-items:center;justify-content:center;background:linear-gradient(160deg,#e8f5c0 0%,#b8d96e 40%,#6B8E23 100%);padding:16px}
+.login-card{background:#fff;border-radius:20px;padding:36px 30px;width:100%;max-width:420px;box-shadow:0 12px 40px rgba(0,0,0,.18)}
+.login-logo{text-align:center;margin-bottom:24px}
+.login-logo .lic{font-size:52px;margin-bottom:8px}
+.login-logo p{font-size:22px;font-weight:700}
+.login-logo span{font-size:13px;color:var(--gray)}
+.perfil-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:10px 0 16px}
+.perfil-pill{font-family:'Nunito',sans-serif;font-size:13px;font-weight:600;padding:12px 10px;border-radius:10px;cursor:pointer;border:1.5px solid var(--brd);background:#fff;color:var(--gray);text-align:center;transition:all .2s}
+.perfil-pill:hover{border-color:var(--blue);color:var(--blue)}
+.perfil-pill.sel{background:var(--blue);color:#fff;border-color:var(--blue)}
+
+/* ── MISC ── */
+.nota-box{border:2px dashed var(--brd);border-radius:10px;padding:16px;text-align:center;cursor:pointer;font-size:13px;font-weight:600;color:var(--gray);margin-top:8px;transition:all .2s}
+.nota-box:hover{border-color:var(--blue);color:var(--blue)}
+.nota-box.ok{border-color:var(--green);background:var(--gl);color:var(--green)}
+.pend-card{border:1px solid var(--brd);border-radius:var(--rad);padding:14px;margin-bottom:12px;border-left:4px solid var(--amb)}
+.loading{text-align:center;padding:50px;color:var(--gray);font-weight:600}
+.spinner{width:34px;height:34px;border:3px solid var(--brd);border-top-color:var(--blue);border-radius:50%;animation:spin .7s linear infinite;margin:0 auto 14px}
+@keyframes spin{to{transform:rotate(360deg)}}
+.li{display:grid;grid-template-columns:1fr 80px 34px;gap:8px;align-items:center;margin-bottom:10px}
+.brm{background:var(--red);color:#fff;border:none;border-radius:6px;padding:5px 9px;cursor:pointer;font-size:14px}
+.cfg-box{background:var(--grl);border:1px solid var(--brd);border-radius:var(--rad);padding:16px;margin-bottom:16px}
+.cfg-title{font-size:13px;font-weight:700;margin-bottom:8px;color:var(--blue)}
+.perm-item{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600;padding:10px 12px;border:1.5px solid var(--brd);border-radius:8px;cursor:pointer;margin-bottom:6px}
+.perm-item.on{background:var(--bl);border-color:var(--blue);color:var(--blue)}
+
+/* ── RESPONSIVO TABLET ── */
+@media(max-width:900px){
+  :root{--sidebar:180px}
+  .metrics{grid-template-columns:repeat(2,1fr)}
+}
+
+/* ── RESPONSIVO MOBILE ── */
+@media(max-width:640px){
+  .sidebar{transform:translateX(-100%)}
+  .sidebar.open{transform:translateX(0);box-shadow:4px 0 20px rgba(0,0,0,.2)}
+  .main{margin-left:0}
+  .topbar{display:none}
+  .mobile-topbar{display:flex}
+  .mobile-nav{display:block}
+  .hamburger{display:block}
+  .content{padding:12px}
+  .mobile-content{padding-bottom:68px}
+  .metrics{grid-template-columns:repeat(2,1fr)}
+  .row2,.row3{grid-template-columns:1fr}
+  .li{grid-template-columns:1fr 70px 32px}
+  input,select{font-size:16px}
+}
+@media(min-width:641px){
+  .mobile-topbar,.mobile-nav{display:none!important}
+}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script>
+// ================================================================
+//  ESTOQUE IGREJA NC BARRA — Sistema Local v4
+//  Responsivo: Desktop (sidebar) | Tablet | Mobile (bottom nav)
+//  Cole a URL do Apps Script na primeira tela de configuração
+// ================================================================
+
+let API_URL = localStorage.getItem("estoque_api_url") || "";
+
+let S = {
+  logado:null, aba:"dashboard",
+  estoque:[], movimentos:[], pendentes:[], usuarios:[],
+  uSel:null, cfgUser:null,
+  msg:"", msgTipo:"green",
+  notaUp:null, notaB64:null, notaMime:null,
+  iS:null, iR:null,
+  fCat:"", fNome:"",
+  load:false,
+  configurando:!API_URL,
+  menuOpen:false,
+};
+
+const ABAS_CTRL=[
+  {id:"saida",lb:"Saída",ico:"📤"},
+  {id:"ajustar",lb:"Ajustar Estoque",ico:"✏️"},
+  {id:"receber",lb:"Receber",ico:"📦"},
+  {id:"entrada",lb:"Confirmar Entradas",ico:"✅"},
+  {id:"movimentos",lb:"Histórico",ico:"📋"},
+  {id:"relatorio",lb:"Relatório",ico:"📊"},
+  {id:"cadastro",lb:"Cadastrar",ico:"➕"},
+];
+
+const TODAS_ABAS = [
+  {id:"dashboard",lb:"Início",ico:"🏠"},
+  {id:"saida",lb:"Saída",ico:"📤"},
+  {id:"ajustar",lb:"Ajustar",ico:"✏️"},
+  {id:"receber",lb:"Receber",ico:"📦"},
+  {id:"estoque",lb:"Estoque",ico:"📦"},
+  {id:"movimentos",lb:"Histórico",ico:"📋"},
+  {id:"entrada",lb:"Confirmar",ico:"✅"},
+  {id:"relatorio",lb:"Relatório",ico:"📊"},
+  {id:"cadastro",lb:"Cadastrar",ico:"➕"},
+  {id:"config",lb:"Config",ico:"⚙️"},
+];
+
+async function api(d){
+  try{
+    const r=await fetch(API_URL,{method:"POST",body:JSON.stringify(d)});
+    return await r.json();
+  }catch(e){return{ok:false,erro:"Erro de conexão. Verifique a URL."};}
+}
+
+async function init(){
+  if(!API_URL){render();return;}
+  const r=await api({acao:"getUsuarios"});
+  if(r.ok){S.usuarios=r.usuarios;if(r.usuarios.length)S.uSel=r.usuarios[0];}
+  render();
+}
+
+async function carregar(){
+  S.load=true;render();
+  const[e,m,p]=await Promise.all([api({acao:"getEstoque"}),api({acao:"getMovimentos"}),api({acao:"getPendentes"})]);
+  if(e.ok)S.estoque=e.estoque;
+  if(m.ok)S.movimentos=m.movimentos;
+  if(p.ok)S.pendentes=p.pendentes;
+  S.load=false;render();
+}
+
+function perms(u){
+  if(!u)return[];
+  if(u.perfil==="admin")return TODAS_ABAS.map(a=>a.id);
+  if(u.permissoes&&u.permissoes.length)return["dashboard","estoque",...u.permissoes];
+  const d={zelador:["saida","ajustar","receber","movimentos","cadastro"],compras:["entrada","movimentos","relatorio","cadastro"],financeiro:["relatorio","movimentos"]};
+  return["dashboard","estoque",...(d[u.perfil]||[])];
+}
+
+function getAbas(){return TODAS_ABAS.filter(a=>perms(S.logado).includes(a.id));}
+
+function render(){
+  const root=document.getElementById("root");
+  if(S.configurando){root.innerHTML=rConfig();return;}
+  if(!S.logado){root.innerHTML=rLogin();return;}
+  root.innerHTML=rApp();
+  if(S.aba==="ajustar")setTimeout(renderAjTab,50);
+}
+
+// ── OVERLAY MOBILE ──
+function toggleMenu(){
+  S.menuOpen=!S.menuOpen;
+  const sb=document.querySelector(".sidebar");
+  if(sb)sb.classList.toggle("open",S.menuOpen);
+}
+document.addEventListener("click",function(e){
+  if(S.menuOpen&&!e.target.closest(".sidebar")&&!e.target.closest(".hamburger")){
+    S.menuOpen=false;
+    const sb=document.querySelector(".sidebar");
+    if(sb)sb.classList.remove("open");
+  }
+});
+
+// ── CONFIGURAÇÃO ──
+function rConfig(){
+  return `<div class="login-page"><div class="login-card">
+    <div class="login-logo"><div class="lic">⛪</div><p>Estoque Igreja</p><span>NC Barra — Configuração</span></div>
+    <div class="cfg-box">
+      <div class="cfg-title">Como obter a URL:</div>
+      <div style="font-size:12px;color:var(--gray);line-height:2.2">
+        1. Abra o Google Apps Script<br>
+        2. Clique em <b>Implantar → Gerenciar implantações</b><br>
+        3. Copie a URL do Aplicativo da Web<br>
+        4. Cole abaixo e clique em Salvar
+      </div>
+    </div>
+    <label class="form-label">URL do Apps Script</label>
+    <input type="url" id="cfg-url" placeholder="https://script.google.com/macros/s/..." value="${API_URL}" style="font-size:12px">
+    <button class="btn btn-blue btn-block" onclick="salvarConfig()">Salvar e conectar</button>
+    <div id="cfg-msg" style="margin-top:10px"></div>
+  </div></div>`;
+}
+
+async function salvarConfig(){
+  const url=document.getElementById("cfg-url").value.trim();
+  if(!url.includes("script.google.com")){
+    document.getElementById("cfg-msg").innerHTML='<div class="alert alert-red">URL inválida.</div>';return;
+  }
+  document.getElementById("cfg-msg").innerHTML='<div class="loading"><div class="spinner"></div>Testando conexão...</div>';
+  API_URL=url;
+  const r=await api({acao:"getUsuarios"});
+  if(r.ok){
+    localStorage.setItem("estoque_api_url",url);
+    S.usuarios=r.usuarios;
+    if(r.usuarios.length)S.uSel=r.usuarios[0];
+    S.configurando=false;render();
+  }else{
+    document.getElementById("cfg-msg").innerHTML='<div class="alert alert-red">Não conectou. Verifique a URL e tente novamente.</div>';
+  }
+}
+
+// ── LOGIN ──
+function rLogin(){
+  const u=S.uSel;
+  return `<div class="login-page"><div class="login-card">
+    <div class="login-logo"><div class="lic">⛪</div><p>Estoque Igreja</p><span>NC Barra</span></div>
+    <label class="form-label">Selecione seu usuário</label>
+    <div class="perfil-grid">
+      ${S.usuarios.map(x=>`<button class="perfil-pill${u&&u.nome===x.nome?" sel":""}" onclick='S.uSel=${JSON.stringify(x)};render()'>${x.nome}<br><span style="font-size:10px;opacity:.7">${x.perfil}</span></button>`).join("")}
+    </div>
+    <label class="form-label">Senha</label>
+    <input type="password" id="pw" placeholder="••••••••" onkeydown="if(event.key==='Enter')fazerLogin()">
+    <div id="lerro" style="color:var(--red);font-size:12px;font-weight:600;margin-top:6px;min-height:18px"></div>
+    <button class="btn btn-blue btn-block" onclick="fazerLogin()">Entrar</button>
+    <button class="btn btn-outline btn-block" style="margin-top:8px;font-size:12px" onclick="S.configurando=true;render()">⚙ Alterar URL do sistema</button>
+  </div></div>`;
+}
+
+async function fazerLogin(){
+  const pw=document.getElementById("pw").value;
+  document.getElementById("lerro").textContent="";
+  if(!S.uSel){document.getElementById("lerro").textContent="Selecione um usuário.";return;}
+  const r=await api({acao:"login",perfil:S.uSel.perfil,senha:pw,nome:S.uSel.nome});
+  if(r.ok){S.logado=r.usuario;S.aba="dashboard";await carregar();}
+  else document.getElementById("lerro").textContent=r.erro;
+}
+
+// ── APP PRINCIPAL ──
+function rApp(){
+  const abs=getAbas();
+  const pend=S.pendentes.length;
+  const isMobile=window.innerWidth<=640;
+  return `
+  <div class="app-wrap">
+    <!-- SIDEBAR DESKTOP/TABLET -->
+    <div class="sidebar${S.menuOpen?" open":""}">
+      <div class="sidebar-logo">
+        <div class="ico" style="font-size:36px">⛪</div>
+        <div class="name">Estoque Igreja</div>
+        <div class="sub">NC Barra</div>
+      </div>
+      <div class="sidebar-user">
+        <div class="uname">${S.logado.nome}</div>
+        <div class="uperfil">${S.logado.perfil}</div>
+      </div>
+      <div class="sidebar-nav">
+        ${abs.map(a=>`<button class="snav-btn${S.aba===a.id?" active":""}" onclick="setAba('${a.id}')">
+          <span class="ico">${a.ico}</span>${a.lb}
+          ${a.id==="entrada"&&pend>0?`<span class="snav-badge">${pend}</span>`:""}
+        </button>`).join("")}
+      </div>
+      <div class="sidebar-footer">
+        <button class="logout-btn" onclick="sair()">↩ Sair do sistema</button>
+      </div>
+    </div>
+
+    <!-- MAIN -->
+    <div class="main">
+      <!-- TOPBAR DESKTOP -->
+      <div class="topbar">
+        <div class="topbar-title">⛪ Estoque NC Barra</div>
+        <span style="font-size:13px;opacity:.8">${S.logado.nome} · ${S.logado.perfil}</span>
+      </div>
+
+      <!-- TOPBAR MOBILE -->
+      <div class="mobile-topbar">
+        <button class="hamburger" onclick="toggleMenu()">☰</button>
+        <div class="mobile-topbar-title">⛪ NC Barra</div>
+        <span style="font-size:11px;opacity:.8">${S.logado.nome}</span>
+      </div>
+
+      <!-- CONTEÚDO -->
+      <div class="content${isMobile?" mobile-content":""}">
+        ${S.load?'<div class="loading"><div class="spinner"></div>Carregando dados...</div>':renderAba()}
+      </div>
+
+      <!-- NAV MOBILE (bottom) -->
+      <div class="mobile-nav">
+        <div class="mobile-nav-inner">
+          ${abs.map(a=>`<button class="mnav-btn${S.aba===a.id?" active":""}" onclick="setAba('${a.id}')">
+            <span class="mnav-ico">${a.ico}</span>${a.lb}${a.id==="entrada"&&pend>0?` (${pend})`:""}
+          </button>`).join("")}
+        </div>
+      </div>
+    </div>
+  </div>`;
+}
+
+function renderAba(){
+  if(S.aba==="dashboard")  return rDash();
+  if(S.aba==="saida")      return rSaida();
+  if(S.aba==="ajustar")    return rAjustar();
+  if(S.aba==="receber")    return rReceber();
+  if(S.aba==="estoque")    return rEstoque();
+  if(S.aba==="movimentos") return rMovimentos();
+  if(S.aba==="entrada")    return rEntrada();
+  if(S.aba==="relatorio")  return rRelatorio();
+  if(S.aba==="cadastro")   return rCadastro();
+  if(S.aba==="config")     return rPermissoes();
+  return "";
+}
+
+async function setAba(a){
+  S.aba=a;S.msg="";S.menuOpen=false;render();
+  if(a==="ajustar")setTimeout(renderAjTab,60);
+}
+function sair(){S.logado=null;S.estoque=[];S.movimentos=[];S.pendentes=[];S.msg="";S.iS=null;S.iR=null;render();}
+function hj(){return new Date().toISOString().split("T")[0];}
+
+// ── DASHBOARD ──
+function rDash(){
+  const bx=S.estoque.filter(e=>e.qtd>0&&e.qtd<=e.minimo);
+  const zr=S.estoque.filter(e=>e.qtd===0);
+  const pnd=S.pendentes.length;
+  const ent=S.movimentos.filter(m=>m.tipo==="entrada").length;
+  const sai=S.movimentos.filter(m=>m.tipo==="saida").length;
+  return `
+    ${S.msg?`<div class="alert alert-${S.msgTipo==="red"?"red":"green"}">${S.msg}</div>`:""}
+    ${zr.length?`<div class="alert alert-amber">⚠ ${zr.length} produto(s) com estoque zerado. Acesse "Ajustar" para atualizar.</div>`:""}
+    ${bx.length?`<div class="alert alert-red">⚠ Estoque baixo: ${bx.map(e=>e.nome).join(", ")}</div>`:""}
+    ${pnd?`<div class="alert alert-amber">📦 ${pnd} recebimento(s) aguardando confirmação.</div>`:""}
+    <div class="metrics">
+      <div class="metric"><div class="metric-label">Produtos</div><div class="metric-val">${S.estoque.length}</div></div>
+      <div class="metric"><div class="metric-label">Zerados</div><div class="metric-val ${zr.length?"red":""}">${zr.length}</div></div>
+      <div class="metric"><div class="metric-label">Entradas</div><div class="metric-val green">${ent}</div></div>
+      <div class="metric"><div class="metric-label">Saídas</div><div class="metric-val">${sai}</div></div>
+    </div>
+    ${S.movimentos.length?`<div class="card"><div class="card-title">Últimas movimentações</div>
+    <div class="table-wrap"><table><thead><tr><th>Data</th><th>Tipo</th><th>Produto</th><th>Qtd</th><th>Usuário</th></tr></thead><tbody>
+    ${S.movimentos.slice(0,8).map(m=>`<tr>
+      <td>${m.data}</td>
+      <td><span class="tag tag-${m.tipo}">${m.tipo}</span></td>
+      <td>${m.produto}</td><td>${m.qtd}</td><td style="color:var(--gray)">${m.usuario}</td>
+    </tr>`).join("")}
+    </tbody></table></div></div>`:""}
+    <button class="btn btn-outline btn-block" style="margin-top:0" onclick="carregar()">↻ Atualizar dados</button>`;
+}
+
+// ── SAÍDA ──
+function linhas(arr,lista,nm){
+  return arr.map((it,i)=>`
+    <div class="li">
+      <select onchange="${nm}[${i}].id=this.value;${nm}[${i}].nome=this.options[this.selectedIndex].dataset.nome">
+        ${lista.map(e=>`<option value="${e.id}" data-nome="${e.nome}"${String(e.id)===String(it.id)?" selected":""}>[${e.categoria}] ${e.nome}${e.qtd!==undefined?" ("+e.qtd+")":""}</option>`).join("")}
+      </select>
+      <input type="number" min="1" value="${it.qtd}" oninput="${nm}[${i}].qtd=parseInt(this.value)||1">
+      <button class="brm" onclick="${nm}.splice(${i},1);if(!${nm}.length)${nm}=[{id:'${lista[0]?.id}',nome:'${lista[0]?.nome}',qtd:1}];render()">✕</button>
+    </div>`).join("");
+}
+
+function rSaida(){
+  const d=S.estoque.filter(e=>e.qtd>0);
+  if(!d.length)return`<div class="card"><p style="color:var(--gray)">Nenhum produto com estoque disponível. Use "Ajustar" primeiro.</p></div>`;
+  if(!S.iS)S.iS=[{id:d[0].id,nome:d[0].nome,qtd:1}];
+  return`<div class="card"><div class="card-title">📤 Registrar saída de material</div>
+    <div style="display:grid;grid-template-columns:1fr 80px 34px;gap:8px;margin-bottom:6px">
+      <span class="form-label" style="margin:0">Produto (disponível)</span>
+      <span class="form-label" style="margin:0;text-align:center">Qtd</span><span></span>
+    </div>
+    ${linhas(S.iS,d,"S.iS")}
+    <button class="btn btn-outline" style="width:100%;margin-top:4px;margin-bottom:14px;font-size:12px;padding:8px" onclick="S.iS.push({id:'${d[0].id}',nome:'${d[0].nome}',qtd:1});render()">+ Adicionar item</button>
+    <div class="row2">
+      <div><label class="form-label">Data</label><input type="date" id="sd" value="${hj()}"></div>
+      <div><label class="form-label">Observação</label><input type="text" id="so" placeholder="Ex: Limpeza salão"></div>
+    </div>
+    <button class="btn btn-red btn-block" onclick="envSaida()">Confirmar saída</button>
+    <div id="smsg"></div>
+  </div>`;
+}
+
+async function envSaida(){
+  const obs=document.getElementById("so").value,data=document.getElementById("sd").value.split("-").reverse().join("/");
+  const itens=S.iS.filter(it=>it.id&&it.qtd>0);
+  if(!itens.length)return;
+  for(const it of itens){const p=S.estoque.find(e=>String(e.id)===String(it.id));if(p&&it.qtd>p.qtd){document.getElementById("smsg").innerHTML=`<div class="alert alert-red" style="margin-top:10px">Insuficiente: ${it.nome} (disponível: ${p.qtd})</div>`;return;}}
+  document.getElementById("smsg").innerHTML='<div class="loading"><div class="spinner"></div>Salvando...</div>';
+  const r=await api({acao:"registrarSaidaLote",itens,usuario:S.logado.nome,obs,data});
+  if(r.ok){S.iS=null;S.msg="Saída registrada com sucesso!";S.msgTipo="green";S.aba="dashboard";await carregar();}
+  else document.getElementById("smsg").innerHTML=`<div class="alert alert-red" style="margin-top:10px">${r.erro}</div>`;
+}
+
+// ── AJUSTAR ESTOQUE ──
+function rAjustar(){
+  const cats=[...new Set(S.estoque.map(e=>e.categoria))];
+  return`<div class="card"><div class="card-title">✏️ Ajustar estoque atual</div>
+    <p style="font-size:12px;color:var(--gray);margin-bottom:14px">Faça a contagem física e atualize as quantidades. Tudo fica registrado no histórico.</p>
+    <div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap">
+      <select id="aj-cat" onchange="renderAjTab()" style="width:auto;font-size:12px;padding:7px 10px">
+        <option value="">Todas categorias</option>${cats.map(c=>`<option value="${c}">${c}</option>`).join("")}
+      </select>
+      <input type="text" id="aj-busca" placeholder="Buscar produto..." oninput="renderAjTab()" style="flex:1;min-width:140px;font-size:12px;padding:7px 10px">
+    </div>
+    <div id="aj-tab"></div>
+    <button class="btn btn-amber btn-block" onclick="salvaAj()">Salvar todos os ajustes</button>
+    <div id="ajmsg"></div>
+  </div>`;
+}
+
+function renderAjTab(){
+  const cat=document.getElementById("aj-cat")?.value||"";
+  const busca=document.getElementById("aj-busca")?.value.toLowerCase()||"";
+  const f=S.estoque.filter(e=>(!cat||e.categoria===cat)&&(!busca||e.nome.toLowerCase().includes(busca)));
+  if(!document.getElementById("aj-tab"))return;
+  document.getElementById("aj-tab").innerHTML=`<div class="table-wrap"><table>
+    <thead><tr><th>Produto</th><th>Categoria</th><th>Un</th><th style="text-align:center">Atual</th><th style="text-align:center">Nova qtd</th></tr></thead>
+    <tbody>${f.map(e=>`<tr>
+      <td style="font-size:12px">${e.nome}</td>
+      <td style="font-size:11px;color:var(--gray)">${e.categoria}</td>
+      <td>${e.unidade}</td>
+      <td style="text-align:center;font-weight:700;color:${e.qtd===0?"var(--gray)":e.qtd<=e.minimo?"var(--red)":"inherit"}">${e.qtd}</td>
+      <td style="text-align:center"><input type="number" data-id="${e.id}" data-nome="${e.nome}" min="0" value="${e.qtd}" style="width:75px;text-align:center;padding:6px;font-size:13px"></td>
+    </tr>`).join("")}</tbody>
+  </table></div>`;
+}
+
+async function salvaAj(){
+  const inp=document.querySelectorAll("#aj-tab input[data-id]");
+  const alt=[];
+  inp.forEach(i=>{const id=parseInt(i.dataset.id),nome=i.dataset.nome,nova=parseInt(i.value)||0,p=S.estoque.find(e=>e.id===id);if(p&&p.qtd!==nova)alt.push({id,nome,nova});});
+  if(!alt.length){document.getElementById("ajmsg").innerHTML='<div class="alert alert-amber" style="margin-top:12px">Nenhuma alteração detectada.</div>';return;}
+  document.getElementById("ajmsg").innerHTML='<div class="loading"><div class="spinner"></div>Salvando...</div>';
+  for(const a of alt)await api({acao:"atualizarEstoque",produtoId:a.id,produtoNome:a.nome,novaQtd:a.nova,usuario:S.logado.nome});
+  S.msg=`${alt.length} produto(s) atualizados com sucesso!`;S.msgTipo="green";S.aba="dashboard";await carregar();
+}
+
+// ── RECEBER ──
+function rReceber(){
+  if(!S.iR)S.iR=[{id:S.estoque[0]?.id||"",nome:S.estoque[0]?.nome||"",qtd:1}];
+  return`<div class="card"><div class="card-title">📦 Receber produtos</div>
+    <p style="font-size:12px;color:var(--gray);margin-bottom:14px">Registre o recebimento e anexe a nota. O responsável por compras confirma a entrada no estoque.</p>
+    <div style="display:grid;grid-template-columns:1fr 80px 34px;gap:8px;margin-bottom:6px">
+      <span class="form-label" style="margin:0">Produto</span>
+      <span class="form-label" style="margin:0;text-align:center">Qtd</span><span></span>
+    </div>
+    ${linhas(S.iR,S.estoque,"S.iR")}
+    <button class="btn btn-outline" style="width:100%;margin-top:4px;margin-bottom:14px;font-size:12px;padding:8px" onclick="S.iR.push({id:'${S.estoque[0]?.id}',nome:'${S.estoque[0]?.nome}',qtd:1});render()">+ Adicionar produto</button>
+    <div class="row2">
+      <div><label class="form-label">Data</label><input type="date" id="rd" value="${hj()}"></div>
+      <div><label class="form-label">Fornecedor</label><input type="text" id="rf" placeholder="Nome do fornecedor"></div>
+    </div>
+    <label class="form-label">Nota fiscal / Comprovante</label>
+    <div class="nota-box${S.notaUp?" ok":""}" onclick="document.getElementById('ni').click()">
+      ${S.notaUp?`✅ ${S.notaUp} — clique para trocar`:"📷 Clique para tirar foto ou anexar PDF da nota"}
+    </div>
+    <input type="file" id="ni" accept="image/*,application/pdf" capture="environment" style="display:none" onchange="handleNota(this)">
+    <label class="form-label">Observação</label>
+    <input type="text" id="ro" placeholder="Informações adicionais">
+    <button class="btn btn-green btn-block" onclick="envReceber()">Enviar para confirmação</button>
+    <div id="rmsg"></div>
+  </div>`;
+}
+
+function handleNota(i){
+  if(!i.files[0])return;
+  const f=i.files[0];S.notaUp=f.name;
+  const r=new FileReader();
+  r.onload=e=>{S.notaB64=e.target.result.split(",")[1];S.notaMime=f.type;render();};
+  r.readAsDataURL(f);
+}
+
+async function envReceber(){
+  const fornec=document.getElementById("rf").value,obs=document.getElementById("ro").value;
+  const data=document.getElementById("rd").value.split("-").reverse().join("/");
+  const itens=S.iR.filter(it=>it.id&&it.qtd>0);
+  if(!itens.length)return;
+  document.getElementById("rmsg").innerHTML='<div class="loading"><div class="spinner"></div>Enviando...</div>';
+  const p={acao:"registrarRecebimentoLote",itens,usuario:S.logado.nome,fornecedor:fornec,obs,data};
+  if(S.notaB64){p.notaBase64=S.notaB64;p.notaMime=S.notaMime||"image/jpeg";p.notaNome=S.notaUp;}
+  const r=await api(p);
+  if(r.ok){S.notaUp=null;S.notaB64=null;S.iR=null;S.msg=`${itens.length} produto(s) enviado(s) para confirmação!`;S.msgTipo="green";S.aba="dashboard";await carregar();}
+  else document.getElementById("rmsg").innerHTML=`<div class="alert alert-red" style="margin-top:10px">${r.erro}</div>`;
+}
+
+// ── ESTOQUE ──
+function rEstoque(){
+  const cats=[...new Set(S.estoque.map(e=>e.categoria))];
+  const f=S.estoque.filter(e=>(!S.fCat||e.categoria===S.fCat)&&(!S.fNome||e.nome.toLowerCase().includes(S.fNome.toLowerCase())));
+  return`<div class="card"><div class="card-title">📦 Estoque atual — ${f.length} itens</div>
+    <div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap">
+      <select onchange="S.fCat=this.value;render()" style="width:auto;font-size:12px;padding:7px 10px">
+        <option value="">Todas categorias</option>${cats.map(c=>`<option value="${c}"${S.fCat===c?" selected":""}>${c}</option>`).join("")}
+      </select>
+      <input type="text" placeholder="Buscar produto..." value="${S.fNome}" oninput="S.fNome=this.value;render()" style="flex:1;min-width:140px;font-size:12px;padding:7px 10px">
+    </div>
+    <div class="table-wrap"><table>
+      <thead><tr><th>Produto</th><th>Categoria</th><th>Qtd</th><th>Un</th><th>Mín</th><th>Status</th></tr></thead>
+      <tbody>${f.map(e=>`<tr>
+        <td style="font-size:12px">${e.nome}</td>
+        <td style="font-size:11px;color:var(--gray)">${e.categoria}</td>
+        <td style="font-weight:700;color:${e.qtd===0?"var(--gray)":e.qtd<=e.minimo?"var(--red)":"inherit"}">${e.qtd}</td>
+        <td>${e.unidade}</td><td>${e.minimo}</td>
+        <td><span class="tag tag-${e.qtd===0?"zero":e.qtd<=e.minimo?"baixo":"ok"}">${e.qtd===0?"zerado":e.qtd<=e.minimo?"baixo":"ok"}</span></td>
+      </tr>`).join("")}</tbody>
+    </table></div>
+  </div>`;
+}
+
+// ── HISTÓRICO ──
+function rMovimentos(){
+  return`<div class="card"><div class="card-title">📋 Histórico de movimentações</div>
+    ${S.movimentos.length?`<div class="table-wrap"><table>
+      <thead><tr><th>Data</th><th>Tipo</th><th>Produto</th><th>Qtd</th><th>Usuário</th><th>Obs</th></tr></thead>
+      <tbody>${S.movimentos.map(m=>`<tr>
+        <td>${m.data}</td>
+        <td><span class="tag tag-${m.tipo}">${m.tipo}</span></td>
+        <td style="font-size:12px">${m.produto}</td><td>${m.qtd}</td>
+        <td style="font-size:11px;color:var(--gray)">${m.usuario}</td>
+        <td style="font-size:11px;color:var(--gray);max-width:160px">${m.obs||""}</td>
+      </tr>`).join("")}</tbody>
+    </table></div>`:'<p style="color:var(--gray)">Nenhuma movimentação registrada ainda.</p>'}
+  </div>`;
+}
+
+// ── CONFIRMAR ENTRADA ──
+function rEntrada(){
+  return`<div class="card"><div class="card-title">✅ Confirmar entradas pendentes</div>
+    ${!S.pendentes.length?'<p style="color:var(--gray)">Nenhum recebimento aguardando confirmação.</p>':""}
+    ${S.pendentes.map(p=>`<div class="pend-card">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+        <div style="font-weight:700;font-size:14px">${p.produto}</div>
+        <span class="tag tag-pendente">pendente</span>
+      </div>
+      <div style="font-size:12px;color:var(--gray);margin-bottom:12px">
+        ${p.data} · Qtd: ${p.qtd} · Recebido por: ${p.usuario}<br>${p.obs||""}
+        ${p.nota&&p.nota!=="sem nota"?`<br><a href="${p.nota}" target="_blank" style="color:var(--blue)">📎 Ver nota fiscal</a>`:""}
+      </div>
+      <div style="display:flex;gap:8px">
+        <button class="btn btn-green" style="margin-top:0;padding:8px 16px;font-size:13px" onclick="confEntrada('${p.id}')">Confirmar entrada</button>
+        <button class="btn btn-outline" style="margin-top:0;padding:8px 16px;font-size:13px" onclick="rejEntrada('${p.id}')">Rejeitar</button>
+      </div>
+    </div>`).join("")}
+  </div>`;
+}
+
+async function confEntrada(id){const r=await api({acao:"confirmarEntrada",pendenteId:id,usuarioConfirmou:S.logado.nome});if(r.ok){S.msg=r.msg;S.msgTipo="green";S.aba="dashboard";await carregar();}}
+async function rejEntrada(id){const r=await api({acao:"rejeitarPendente",pendenteId:id});if(r.ok)await carregar();}
+
+// ── RELATÓRIO ──
+function rRelatorio(){
+  const cats={};
+  S.estoque.forEach(e=>{if(!cats[e.categoria])cats[e.categoria]={n:0,v:0,z:0};cats[e.categoria].n++;cats[e.categoria].v+=e.qtd*e.valor;if(e.qtd===0)cats[e.categoria].z++;});
+  const tot=S.estoque.reduce((s,e)=>s+(e.qtd*e.valor),0);
+  return`<div class="card"><div class="card-title">📊 Relatório geral</div>
+    <div class="metrics">
+      <div class="metric"><div class="metric-label">Produtos</div><div class="metric-val">${S.estoque.length}</div></div>
+      <div class="metric"><div class="metric-label">Valor total</div><div class="metric-val" style="font-size:18px">R$${tot.toFixed(0)}</div></div>
+      <div class="metric"><div class="metric-label">Zerados</div><div class="metric-val red">${S.estoque.filter(e=>e.qtd===0).length}</div></div>
+      <div class="metric"><div class="metric-label">Moviment.</div><div class="metric-val">${S.movimentos.length}</div></div>
+    </div>
+    <div class="table-wrap"><table>
+      <thead><tr><th>Categoria</th><th>Itens</th><th>Zerados</th><th>Valor estoque</th></tr></thead>
+      <tbody>${Object.entries(cats).map(([c,v])=>`<tr>
+        <td>${c}</td><td>${v.n}</td>
+        <td style="color:${v.z>0?"var(--red)":"inherit"};font-weight:${v.z>0?"700":"400"}">${v.z}</td>
+        <td>R$ ${v.v.toFixed(2)}</td>
+      </tr>`).join("")}</tbody>
+    </table></div>
+    <button class="btn btn-outline" style="margin-top:14px" onclick="window.print()">🖨️ Imprimir relatório</button>
+  </div>`;
+}
+
+// ── CADASTRAR ──
+function rCadastro(){
+  return`<div class="card"><div class="card-title">➕ Cadastrar novo produto</div>
+    <label class="form-label">Nome do produto</label>
+    <input type="text" id="cn" placeholder="Ex: Sabão em Pó 1kg">
+    <div class="row2">
+      <div><label class="form-label">Categoria</label>
+        <select id="cc">
+          <option>Descartáveis</option><option>Material de Limpeza</option>
+          <option>Higiene Pessoal</option><option>Cafés e Etc</option>
+          <option>Biscoitos</option><option>Material Elétrico</option><option>Outros</option>
+        </select>
+      </div>
+      <div><label class="form-label">Unidade</label>
+        <select id="cu"><option>UN</option><option>KG</option><option>CX</option><option>FD</option><option>PCT</option><option>M</option><option>L</option></select>
+      </div>
+    </div>
+    <div class="row3">
+      <div><label class="form-label">Qtd inicial</label><input type="number" id="cq" value="0" min="0"></div>
+      <div><label class="form-label">Estoque mínimo</label><input type="number" id="cm" value="5" min="1"></div>
+      <div><label class="form-label">Valor R$</label><input type="number" id="cv" value="0" step="0.01" min="0"></div>
+    </div>
+    <button class="btn btn-blue btn-block" onclick="envCadastro()">Cadastrar produto</button>
+    <div id="cmsg"></div>
+  </div>`;
+}
+
+async function envCadastro(){
+  const nome=document.getElementById("cn").value.trim();
+  if(!nome)return;
+  document.getElementById("cmsg").innerHTML='<div class="loading"><div class="spinner"></div>Salvando...</div>';
+  const r=await api({acao:"cadastrarProduto",nome,categoria:document.getElementById("cc").value,unidade:document.getElementById("cu").value,qtd:document.getElementById("cq").value,minimo:document.getElementById("cm").value,valor:document.getElementById("cv").value});
+  if(r.ok){S.msg=`Produto "${nome}" cadastrado!`;S.msgTipo="green";S.aba="dashboard";await carregar();}
+  else document.getElementById("cmsg").innerHTML=`<div class="alert alert-red" style="margin-top:10px">${r.erro}</div>`;
+}
+
+// ── PERMISSÕES ──
+function rPermissoes(){
+  const us=S.usuarios.filter(u=>u.perfil!=="admin");
+  if(!S.cfgUser&&us.length)S.cfgUser=us[0];
+  const cu=S.cfgUser;
+  const ps=cu?.permissoes||[];
+  return`<div class="card"><div class="card-title">⚙️ Permissões de acesso</div>
+    <label class="form-label">Selecione o usuário</label>
+    <div class="perfil-grid" style="margin-bottom:14px">
+      ${us.map(u=>`<button class="perfil-pill${cu&&cu.nome===u.nome?" sel":""}" onclick='S.cfgUser=${JSON.stringify(u)};render()'>${u.nome}<br><span style="font-size:10px;opacity:.7">${u.perfil}</span></button>`).join("")}
+    </div>
+    ${cu?`<label class="form-label">Permissões de ${cu.nome}</label>
+    <div style="margin-top:8px">
+      ${ABAS_CTRL.map(a=>`<div class="perm-item${ps.includes(a.id)?" on":""}" onclick="togPerm('${a.id}')">
+        <input type="checkbox"${ps.includes(a.id)?" checked":""} style="width:auto;pointer-events:none"> ${a.ico} ${a.lb}
+      </div>`).join("")}
+    </div>
+    <button class="btn btn-blue btn-block" onclick="salvaPerm()">Salvar permissões</button>
+    <div id="pfmsg"></div>`:""}
+  </div>`;
+}
+
+function togPerm(id){
+  if(!S.cfgUser)return;
+  const u=S.usuarios.find(x=>x.nome===S.cfgUser.nome);
+  if(!u)return;
+  if(!u.permissoes)u.permissoes=[];
+  const i=u.permissoes.indexOf(id);
+  if(i>=0)u.permissoes.splice(i,1);else u.permissoes.push(id);
+  S.cfgUser={...u};render();
+}
+
+async function salvaPerm(){
+  if(!S.cfgUser)return;
+  document.getElementById("pfmsg").innerHTML='<div class="loading"><div class="spinner"></div>Salvando...</div>';
+  const r=await api({acao:"salvarPermissoes",nome:S.cfgUser.nome,permissoes:S.cfgUser.permissoes||[]});
+  document.getElementById("pfmsg").innerHTML=r.ok?'<div class="alert alert-green" style="margin-top:10px">Permissões salvas!</div>':'<div class="alert alert-red" style="margin-top:10px">'+r.erro+'</div>';
+}
+
+// Responsivo ao redimensionar
+window.addEventListener("resize",()=>{if(S.logado)render();});
+
+init();
+</script>
+</body>
+</html>
